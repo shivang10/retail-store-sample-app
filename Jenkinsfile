@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         AWS_REGION = 'us-east-1' // Set your AWS region
+        PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
     }
 
     stages {
@@ -10,6 +11,12 @@ pipeline {
             steps {
                 echo 'Checking out code...'
                 checkout scm
+            }
+        }
+        stage('Verify Tools') {
+            steps {
+                sh 'which terraform'
+                sh 'which helm'
             }
         }
         stage('Debug Environment') {
