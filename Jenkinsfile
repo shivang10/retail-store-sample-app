@@ -34,7 +34,19 @@ pipeline {
                 sh 'aws --version'
             }
         }
-
+        stage('Terraform Destroy') {
+            when {
+                expression {
+                    return params.DESTROY_RESOURCES == true // Only run if DESTROY_RESOURCES is set to true
+                }
+            }
+            steps {
+                echo 'Destroying Terraform-managed resources...'
+                dir('terraform/eks/default') {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
         stage('Terraform Init & Plan') {
             steps {
                 echo 'Initializing and planning Terraform...'
@@ -45,14 +57,14 @@ pipeline {
             }
         }
 
-        stage('Terraform Apply') {
-            steps {
-                echo 'Applying Terraform changes...'
-                dir('terraform/eks/default') {
-                    sh 'terraform apply -auto-approve tfplan'
-                }
-            }
-        }
+        // stage('Terraform Apply') {
+        //     steps {
+        //         echo 'Applying Terraform changes...'
+        //         dir('terraform/eks/default') {
+        //             sh 'terraform apply -auto-approve tfplan'
+        //         }
+        //     }
+        // }
 
         stage('Generate Kubeconfig') {
             steps {
