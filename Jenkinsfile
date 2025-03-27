@@ -38,19 +38,20 @@ pipeline {
             steps {
                 echo 'Destroying Terraform-managed resources...'
                 dir('terraform/eks/default') {
+                    sh 'terraform init'
                     sh 'terraform destroy -auto-approve'
                 }
             }
         }
-        stage('Terraform Init & Plan') {
-            steps {
-                echo 'Initializing and planning Terraform...'
-                dir('terraform/eks/default') {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
-                }
-            }
-        }
+        // stage('Terraform Init & Plan') {
+        //     steps {
+        //         echo 'Initializing and planning Terraform...'
+        //         dir('terraform/eks/default') {
+        //             sh 'terraform init'
+        //             sh 'terraform plan -out=tfplan'
+        //         }
+        //     }
+        // }
 
         // stage('Terraform Apply') {
         //     steps {
