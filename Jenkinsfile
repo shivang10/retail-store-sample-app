@@ -35,11 +35,6 @@ pipeline {
             }
         }
         stage('Terraform Destroy') {
-            when {
-                expression {
-                    return params.DESTROY_RESOURCES == true // Only run if DESTROY_RESOURCES is set to true
-                }
-            }
             steps {
                 echo 'Destroying Terraform-managed resources...'
                 dir('terraform/eks/default') {
