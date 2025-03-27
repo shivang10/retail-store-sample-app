@@ -12,7 +12,13 @@ pipeline {
                 checkout scm
             }
         }
-
+        stage('Debug Environment') {
+            steps {
+                sh 'echo $PATH'
+                sh 'which sh'
+            }
+        }
+        
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
