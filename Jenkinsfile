@@ -13,7 +13,7 @@ pipeline {
                 checkout scm
             }
         }
-        
+
         stage('Verify Tools') {
             steps {
                 sh 'which terraform'
@@ -127,5 +127,6 @@ pipeline {
                 sh 'terraform init' // Ensure backend is initialized
                 sh 'terraform destroy -auto-approve'
             }
+        }
     }
 }
