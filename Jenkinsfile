@@ -13,12 +13,14 @@ pipeline {
                 checkout scm
             }
         }
+        
         stage('Verify Tools') {
             steps {
                 sh 'which terraform'
                 sh 'which helm'
             }
         }
+
         stage('Debug Environment') {
             steps {
                 sh 'echo $PATH'
@@ -34,33 +36,25 @@ pipeline {
                 sh 'aws --version'
             }
         }
-        stage('Terraform Destroy') {
+
+        stage('Terraform Init & Plan') {
             steps {
-                echo 'Destroying Terraform-managed resources...'
+                echo 'Initializing and planning Terraform...'
                 dir('terraform/eks/default') {
                     sh 'terraform init'
-                    sh 'terraform destroy -auto-approve'
+                    sh 'terraform plan -out=tfplan'
                 }
             }
         }
-        // stage('Terraform Init & Plan') {
-        //     steps {
-        //         echo 'Initializing and planning Terraform...'
-        //         dir('terraform/eks/default') {
-        //             sh 'terraform init'
-        //             sh 'terraform plan -out=tfplan'
-        //         }
-        //     }
-        // }
 
-        // stage('Terraform Apply') {
-        //     steps {
-        //         echo 'Applying Terraform changes...'
-        //         dir('terraform/eks/default') {
-        //             sh 'terraform apply -auto-approve tfplan'
-        //         }
-        //     }
-        // }
+        stage('Terraform Apply') {
+            steps {
+                echo 'Applying Terraform changes...'
+                dir('terraform/eks/default') {
+                    sh 'terraform apply -auto-approve tfplan'
+                }
+            }
+        }
 
         stage('Generate Kubeconfig') {
             steps {
@@ -122,13 +116,16 @@ pipeline {
     post {
         always {
             echo 'Cleaning up workspace...'
-            cleanWs()
+            // cleanWs()
         }
         success {
             echo 'Deployment successful!'
         }
         failure {
-            echo 'Deployment failed!'
-        }
+            echo 'Pipeline failed! Destroying Terraform-managed resources...'
+            dir('terraform/eks/default') {
+                sh 'terraform init' // Ensure backend is initialized
+                sh 'terraform destroy -auto-approve'
+            }
     }
 }
