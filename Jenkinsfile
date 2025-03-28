@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = 'ap-southeast-2' // Set your AWS region
+        AWS_REGION = 'ap-northeast-3' // Set your AWS region
         PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
     }
 
