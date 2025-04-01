@@ -56,21 +56,21 @@ pipeline {
             }
         }
 
-        stage('Generate Kubeconfig') {
-            steps {
-                echo 'Generating kubeconfig...'
-                dir('terraform/eks/default') {
-                    script {
-                        // Use AWS CLI to generate kubeconfig for the EKS cluster
-                        sh '''
-                        aws eks update-kubeconfig \
-                            --region ${AWS_REGION} \
-                            --name $(terraform output -raw eks_cluster_name)
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('Generate Kubeconfig') {
+        //     steps {
+        //         echo 'Generating kubeconfig...'
+        //         dir('terraform/eks/default') {
+        //             script {
+        //                 // Use AWS CLI to generate kubeconfig for the EKS cluster
+        //                 sh '''
+        //                 aws eks update-kubeconfig \
+        //                     --region ${AWS_REGION} \
+        //                     --name $(terraform output -raw eks_cluster_name)
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build Docker Images') {
             steps {
@@ -86,16 +86,16 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 echo 'Pushing Docker images to registry...'
-                sh 'docker tag my-app-catalog <your-docker-registry>/my-app-catalog:latest'
-                sh 'docker push <your-docker-registry>/my-app-catalog:latest'
-                sh 'docker tag my-app-cart <your-docker-registry>/my-app-cart:latest'
-                sh 'docker push <your-docker-registry>/my-app-cart:latest'
-                sh 'docker tag my-app-checkout <your-docker-registry>/my-app-checkout:latest'
-                sh 'docker push <your-docker-registry>/my-app-checkout:latest'
-                sh 'docker tag my-app-orders <your-docker-registry>/my-app-orders:latest'
-                sh 'docker push <your-docker-registry>/my-app-orders:latest'
-                sh 'docker tag my-app-ui <your-docker-registry>/my-app-ui:latest'
-                sh 'docker push <your-docker-registry>/my-app-ui:latest'
+                sh 'docker tag my-app-catalog rbakolia132/my-app-catalog:latest'
+                sh 'docker push rbakolia132/my-app-catalog:latest'
+                sh 'docker tag my-app-cart rbakolia132/my-app-cart:latest'
+                sh 'docker push rbakolia132/my-app-cart:latest'
+                sh 'docker tag my-app-checkout rbakolia132/my-app-checkout:latest'
+                sh 'docker push rbakolia132/my-app-checkout:latest'
+                sh 'docker tag my-app-orders rbakolia132/my-app-orders:latest'
+                sh 'docker push rbakolia132/my-app-orders:latest'
+                sh 'docker tag my-app-ui rbakolia132/my-app-ui:latest'
+                sh 'docker push rbakolia132/my-app-ui:latest'
             }
         }
 
