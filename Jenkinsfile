@@ -4,8 +4,8 @@ pipeline {
     environment {
         AWS_REGION = 'ap-northeast-3' // Set your AWS region
         PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Replace with your credential ID
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') // Replace with your credential ID
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
     stages {
@@ -29,50 +29,7 @@ pipeline {
                 sh 'which sh'
             }
         }
-        
-        stage('Install Dependencies') {
-            steps {
-                echo 'Installing dependencies...'
-                sh 'terraform --version'
-                sh 'helm version'
-                sh 'aws --version'
-            }
-        }
 
-        // stage('Terraform Init & Plan') {
-        //     steps {
-        //         echo 'Initializing and planning Terraform...'
-        //         dir('terraform/eks/default') {
-        //             sh 'terraform init'
-        //             sh 'terraform plan -out=tfplan'
-        //         }
-        //     }
-        // }
-
-        // stage('Terraform Apply') {
-        //     steps {
-        //         echo 'Applying Terraform changes...'
-        //         dir('terraform/eks/default') {
-        //             sh 'terraform apply -auto-approve tfplan'
-        //         }
-        //     }
-        // }
-
-        stage('Generate Kubeconfig') {
-            steps {
-                echo 'Generating kubeconfig...'
-                dir('terraform/eks/default') {
-                    script {
-                        // Use AWS CLI to generate kubeconfig for the EKS cluster
-                        sh '''
-                        aws eks update-kubeconfig \
-                            --region ${AWS_REGION} \
-                            --name $(terraform output -raw retail-store)
-                        '''
-                    }
-                }
-            }
-        }
 
         stage('Build Docker Images') {
             steps {
@@ -105,8 +62,12 @@ pipeline {
             steps {
                 echo 'Deploying to Kubernetes using Helm...'
                 dir('terraform/eks/default') {
+                    sh 'pwd'
+                    sh 'aws eks update-kubeconfig --name retail-store'
+                    // Update packages inside the cluster
+                    // sh 'aws eks update-kubeconfig --name retail-store'
                     // sh 'helm upgrade --install catalog ./src/catalog/chart --namespace catalog --values ./terraform/eks/default/values/catalog.yaml'
-                    sh 'helm upgrade --install cart ./src/cart/chart --namespace carts --values ./terraform/eks/default/values/carts.yaml'
+                    sh 'helm upgrade --install cart ../../../src/cart/chart --namespace carts --values ../../../terraform/eks/default/values/carts.yaml'
                     // sh 'helm upgrade --install checkout ./src/checkout/chart --namespace checkout --values ./terraform/eks/default/values/checkout.yaml'
                     // sh 'helm upgrade --install orders ./src/orders/chart --namespace orders --values ./terraform/eks/default/values/orders.yaml'
                     // sh 'helm upgrade --install ui ./src/ui/chart --namespace ui --values ./terraform/eks/default/values/ui.yaml'
@@ -130,4 +91,4 @@ pipeline {
             //     sh 'terraform destroy -auto-approve'
             }
         }
-    
+}
