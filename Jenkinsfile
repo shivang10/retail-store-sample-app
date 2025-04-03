@@ -4,6 +4,8 @@ pipeline {
     environment {
         AWS_REGION = 'ap-northeast-3' // Set your AWS region
         PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID') // Replace with your credential ID
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') // Replace with your credential ID
     }
 
     stages {
@@ -56,21 +58,21 @@ pipeline {
         //     }
         // }
 
-        // stage('Generate Kubeconfig') {
-        //     steps {
-        //         echo 'Generating kubeconfig...'
-        //         dir('terraform/eks/default') {
-        //             script {
-        //                 // Use AWS CLI to generate kubeconfig for the EKS cluster
-        //                 sh '''
-        //                 aws eks update-kubeconfig \
-        //                     --region ${AWS_REGION} \
-        //                     --name $(terraform output -raw eks_cluster_name)
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Generate Kubeconfig') {
+            steps {
+                echo 'Generating kubeconfig...'
+                dir('terraform/eks/default') {
+                    script {
+                        // Use AWS CLI to generate kubeconfig for the EKS cluster
+                        sh '''
+                        aws eks update-kubeconfig \
+                            --region ${AWS_REGION} \
+                            --name $(terraform output -raw retail-store)
+                        '''
+                    }
+                }
+            }
+        }
 
         stage('Build Docker Images') {
             steps {
@@ -128,4 +130,4 @@ pipeline {
             //     sh 'terraform destroy -auto-approve'
             }
         }
-    }
+    
