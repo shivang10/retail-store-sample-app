@@ -61,11 +61,13 @@ pipeline {
 
         stage('Update Kubeconfig') {
             steps {
-                sh '''
-                aws eks update-kubeconfig --name retail-store --region $AWS_REGION
-                '''
+                dir('terraform/eks/default') {
+                    sh '''
+                    aws eks update-kubeconfig --name retail-store --region $AWS_REGION
+                    '''
             }
         }
+    }
 
         stage('Deploy to Kubernetes') {
             steps {
