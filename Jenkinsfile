@@ -61,10 +61,12 @@ pipeline {
 
         stage('Debug AWS Credentials') {
             steps {
-                sh '''
-                echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-                aws sts get-caller-identity
-                '''
+                dir('terraform/eks/default') {
+                    sh '''
+                    echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
+                    aws sts get-caller-identity
+                    '''
+                }
             }
         }
 
