@@ -6,11 +6,11 @@ serviceAccount:
   annotations:
     eks.amazonaws.com/role-arn: ${role_arn}
 
-%{ if opentelemetry_enabled }
-opentelemetry:
-  enabled: true
-  instrumentation: ${opentelemetry_instrumentation}
-%{ endif }
+# %{ if opentelemetry_enabled }
+# opentelemetry:
+#   enabled: true
+#   instrumentation: ${opentelemetry_instrumentation}
+# %{ endif }
 
 app:
   persistence:
