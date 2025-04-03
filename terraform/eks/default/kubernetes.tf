@@ -69,33 +69,12 @@ resource "kubernetes_namespace_v1" "catalog" {
   }
 }
 
-
-resource "helm_release" "alb_ingress_controller" {
-  name       = "aws-load-balancer-controller"
-  chart      = "eks/aws-load-balancer-controller"
-  namespace  = "kube-system"
-  version    = "2.5.1" # Updated to v2.5.1
-
-  set {
-    name  = "clusterName"
-    value = module.retail_app_eks.eks_cluster_id
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = false
-  }
-
-}
-
 resource "helm_release" "catalog" {
   name  = "catalog"
   chart = "../../../src/catalog/chart"
 
   namespace = kubernetes_namespace_v1.catalog.metadata[0].name
   
-  depends_on = [helm_release.alb_ingress_controller] # Ensures ALB Ingress Controller is deployed first
-
   values = [
     templatefile("${path.module}/values/catalog.yaml", {
       image_repository              = module.container_images.result.catalog.repository
@@ -128,8 +107,6 @@ resource "helm_release" "carts" {
 
   namespace = kubernetes_namespace_v1.carts.metadata[0].name
 
-  depends_on = [helm_release.alb_ingress_controller] # Ensures ALB Ingress Controller is deployed first
-
   values = [
     templatefile("${path.module}/values/carts.yaml", {
       image_repository              = module.container_images.result.cart.repository
@@ -159,8 +136,6 @@ resource "helm_release" "checkout" {
   chart = "../../../src/checkout/chart"
 
   namespace = kubernetes_namespace_v1.checkout.metadata[0].name
-
-  depends_on = [helm_release.alb_ingress_controller] # Ensures ALB Ingress Controller is deployed first
 
   values = [
     templatefile("${path.module}/values/checkout.yaml", {
@@ -192,8 +167,6 @@ resource "helm_release" "orders" {
   chart = "../../../src/orders/chart"
 
   namespace = kubernetes_namespace_v1.orders.metadata[0].name
-
-  depends_on = [helm_release.alb_ingress_controller] # Ensures ALB Ingress Controller is deployed first
 
   values = [
     templatefile("${path.module}/values/orders.yaml", {

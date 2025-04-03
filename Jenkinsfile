@@ -37,24 +37,24 @@ pipeline {
             }
         }
 
-        stage('Terraform Init & Plan') {
-            steps {
-                echo 'Initializing and planning Terraform...'
-                dir('terraform/eks/default') {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
-                }
-            }
-        }
+        // stage('Terraform Init & Plan') {
+        //     steps {
+        //         echo 'Initializing and planning Terraform...'
+        //         dir('terraform/eks/default') {
+        //             sh 'terraform init'
+        //             sh 'terraform plan -out=tfplan'
+        //         }
+        //     }
+        // }
 
-        stage('Terraform Apply') {
-            steps {
-                echo 'Applying Terraform changes...'
-                dir('terraform/eks/default') {
-                    sh 'terraform apply -auto-approve tfplan'
-                }
-            }
-        }
+        // stage('Terraform Apply') {
+        //     steps {
+        //         echo 'Applying Terraform changes...'
+        //         dir('terraform/eks/default') {
+        //             sh 'terraform apply -auto-approve tfplan'
+        //         }
+        //     }
+        // }
 
         // stage('Generate Kubeconfig') {
         //     steps {
@@ -122,10 +122,10 @@ pipeline {
             echo 'Deployment successful!'
         }
         failure {
-            echo 'Pipeline failed! Destroying Terraform-managed resources...'
-            dir('terraform/eks/default') {
-                sh 'terraform init' // Ensure backend is initialized
-                sh 'terraform destroy -auto-approve'
+            echo 'Pipeline failed!'
+            // dir('terraform/eks/default') {
+            //     sh 'terraform init' // Ensure backend is initialized
+            //     sh 'terraform destroy -auto-approve'
             }
         }
     }
