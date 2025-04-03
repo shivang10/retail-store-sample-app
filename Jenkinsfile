@@ -58,12 +58,20 @@ pipeline {
             }
         }
 
+
+        stage('Update Kubeconfig') {
+            steps {
+                sh '''
+                aws eks update-kubeconfig --name retail-store --region $AWS_REGION
+                '''
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploying to Kubernetes using Helm...'
                 dir('terraform/eks/default') {
                     sh 'pwd'
-                    sh 'aws eks update-kubeconfig --name retail-store'
                     // Update packages inside the cluster
                     // sh 'aws eks update-kubeconfig --name retail-store'
                     // sh 'helm upgrade --install catalog ./src/catalog/chart --namespace catalog --values ./terraform/eks/default/values/catalog.yaml'
