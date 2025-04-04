@@ -6,7 +6,7 @@ pipeline {
         PATH = "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_SESSION_TOKEN = credentials('AWS_SESSION_TOKEN')
+        // AWS_SESSION_TOKEN = credentials('AWS_SESSION_TOKEN')
     }
 
     stages {
@@ -32,32 +32,32 @@ pipeline {
         }
 
 
-        // stage('Build Docker Images') {
-        //     steps {
-        //         echo 'Building Docker images...'
-        //         // sh 'docker build -t my-app-catalog ./src/catalog'
-        //         sh 'docker build -t my-app-cart ./src/cart'
-        //         // sh 'docker build -t my-app-checkout ./src/checkout'
-        //         // sh 'docker build -t my-app-orders ./src/orders'
-        //         // sh 'docker build -t my-app-ui ./src/ui'
-        //     }
-        // }
+        stage('Build Docker Images') {
+            steps {
+                echo 'Building Docker images...'
+                // sh 'docker build -t my-app-catalog ./src/catalog'
+                sh 'docker build -t my-app-cart ./src/cart'
+                // sh 'docker build -t my-app-checkout ./src/checkout'
+                // sh 'docker build -t my-app-orders ./src/orders'
+                // sh 'docker build -t my-app-ui ./src/ui'
+            }
+        }
 
-        // stage('Push Docker Images') {
-        //     steps {
-        //         echo 'Pushing Docker images to registry...'
-        //         // sh 'docker tag my-app-catalog rbakolia132/my-app-catalog:latest'
-        //         // sh 'docker push rbakolia132/my-app-catalog:latest'
-        //         sh 'docker tag my-app-cart rbakolia132/my-app-cart:latest'
-        //         sh 'docker push rbakolia132/my-app-cart:latest'
-        //         // sh 'docker tag my-app-checkout rbakolia132/my-app-checkout:latest'
-        //         // sh 'docker push rbakolia132/my-app-checkout:latest'
-        //         // sh 'docker tag my-app-orders rbakolia132/my-app-orders:latest'
-        //         // sh 'docker push rbakolia132/my-app-orders:latest'
-        //         // sh 'docker tag my-app-ui rbakolia132/my-app-ui:latest'
-        //         // sh 'docker push rbakolia132/my-app-ui:latest'
-        //     }
-        // }
+        stage('Push Docker Images') {
+            steps {
+                echo 'Pushing Docker images to registry...'
+                // sh 'docker tag my-app-catalog rbakolia132/my-app-catalog:latest'
+                // sh 'docker push rbakolia132/my-app-catalog:latest'
+                sh 'docker tag my-app-cart rbakolia132/my-app-cart:latest'
+                sh 'docker push rbakolia132/my-app-cart:latest'
+                // sh 'docker tag my-app-checkout rbakolia132/my-app-checkout:latest'
+                // sh 'docker push rbakolia132/my-app-checkout:latest'
+                // sh 'docker tag my-app-orders rbakolia132/my-app-orders:latest'
+                // sh 'docker push rbakolia132/my-app-orders:latest'
+                // sh 'docker tag my-app-ui rbakolia132/my-app-ui:latest'
+                // sh 'docker push rbakolia132/my-app-ui:latest'
+            }
+        }
 
         stage('Debug AWS Credentials') {
             steps {
